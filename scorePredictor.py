@@ -36,5 +36,10 @@ scoreSplits = [0, avg+stdev]
 Y = FE.labelAnswerByScoreSplits(posts, scoreSplits)
 
 print "Run n-folds validation and output resulting scores"
-print LM.nFoldValidation(X,Y,nfolds,MultinomialNB())
-print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC())
+print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=1.0))
+print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=2.0))
+print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=5.0))
+print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=10.0))
+print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=1.0))
+print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.01))
+print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.0001))
