@@ -4,7 +4,6 @@ import pickle
 QUESTION = "1"
 ANSWER = "2"
 
-#'./stackExchangeData/Apple/Posts.xml'
 def extractPosts(inputSource):
     print "Extracting posts and making dictionary. Hang on this may take a bit:"
     print "1. Creating parse tree"
@@ -50,20 +49,22 @@ def extractPosts(inputSource):
         if currEntry['FavoriteCount'] != None: currEntry['FavoriteCount'] = int(currEntry['FavoriteCount'])
         else: currEntry['FavoriteCount'] = 0
 
+        #Convert text entries into '' if does not exist
+        if currEntry['Title'] == None: currEntry['Title'] = ''
+        if currEntry['Body'] == None: currEntry['Body'] = ''
+
         #Save into posts list
         posts += [currEntry]
 
     print "3. Returning posts"
     return posts
 
-# './stackExchangeData/Apple/posts.pk1'
-def savePosts(outputDest):
+def savePosts(posts, outputDest):
     print "Saving posts into dictionary file"
     postsOutput = open(outputDest, 'wb')
     pickle.dump(posts, postsOutput)
     postsOutput.close()
 
-# './stackExchangeData/Apple/posts.pk1'
 def loadPosts(inputSource):
     print "Loading saved posts dictionary file"
     postsInput = open(inputSource, 'rb')
