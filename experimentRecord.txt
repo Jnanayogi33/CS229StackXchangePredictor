@@ -13,7 +13,7 @@ Labels: 3 classes
 - score <= 0, 
 - 0 < score <= mean + stdev
 - mean + stdev < score
-Learning model: Multinomial naive bayes
+Learning model: Multinomial naive bayes, default scikit parameters
 Training set performance: Accuracy 65.6% with 0.1% standard deviation
 Test set performance: Accuracy 55.6% with 0.5% standard deviation
 
@@ -32,6 +32,6 @@ Labels: 3 classes
 - score <= 0, 
 - 0 < score <= mean + stdev
 - mean + stdev < score
-Learning model: Multinomial naive bayes
+Learning model: SVM, default scikit parameters
 Training set performance: Accuracy 81.9% with 0.2% standard deviation
 Test set performance: Accuracy 54.7% with 0.8% standard deviation
