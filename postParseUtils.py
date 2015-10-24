@@ -1,11 +1,11 @@
 import xml.etree.ElementTree as ET
 import pickle
+import numpy as np
 
 QUESTION = "1"
 ANSWER = "2"
 
 def extractPosts(inputSource):
-    print "Extracting posts and making dictionary. Hang on this may take a bit:"
     print "1. Creating parse tree"
     tree = ET.parse(inputSource)
     root = tree.getroot()
@@ -14,8 +14,6 @@ def extractPosts(inputSource):
     posts = []
     for post in root:
         currEntry = {}
-
-        #Extract information in raw form
         currEntry['Id'] = post.get('Id')
         currEntry['PostTypeId'] = post.get('PostTypeId')
         currEntry['ParentID'] = post.get('ParentID')
@@ -60,28 +58,40 @@ def extractPosts(inputSource):
     return posts
 
 def savePosts(posts, outputDest):
-    print "Saving posts into dictionary file"
     postsOutput = open(outputDest, 'wb')
     pickle.dump(posts, postsOutput)
     postsOutput.close()
 
 def loadPosts(inputSource):
-    print "Loading saved posts dictionary file"
     postsInput = open(inputSource, 'rb')
     posts = pickle.load(postsInput)
     postsInput.close()
     return posts
 
+def getAllAnswerScores(posts):
+    answerScores = []
+    for post in posts:
+        if post['PostTypeId']==ANSWER: answerScores += [post['Score']]
+    return answerScores
+
+def getTotalQuestions(posts):
+    return sum(1 for post in posts if post['PostTypeId'] == QUESTION)
+def getTotalAnswers(posts):
+    return sum(1 for post in posts if post['PostTypeId'] == ANSWER)
+def getAverageQuestionScore(posts):
+    return float(sum(post['Score'] for post in posts if post['PostTypeId'] == QUESTION))/float(getTotalQuestions(posts))
+def getAverageAnswerScore(posts):
+    return float(sum(post['Score'] for post in posts if post['PostTypeId'] == ANSWER))/float(getTotalAnswers(posts))
+def getAnswerScoreStDev(posts):
+    return np.std(getAllAnswerScores(posts))
+
 def printBasicStats(posts):
-    print "Calculating some basic statistics"
-    totalQuestions = sum(1 for post in posts if post['PostTypeId'] == QUESTION)
-    totalAnswers = sum(1 for post in posts if post['PostTypeId'] == ANSWER)
-    averageQuestionScore = float(sum(post['Score'] for post in posts if post['PostTypeId'] == QUESTION))/float(totalQuestions)
-    averageAnswerScore = float(sum(post['Score'] for post in posts if post['PostTypeId'] == ANSWER))/float(totalAnswers)
+    print "Some basic statistics:"
+    print "-------------------------------------------------------"
     numZeroScoreAnswers = sum(1 for post in posts if (post['Score'] == 0) and (post['PostTypeId'] == ANSWER))
 
-    print "Total Questions:", totalQuestions
-    print "Total Answers:", totalAnswers
-    print "Average Question Score:", averageQuestionScore
-    print "Average Answer Score:", averageAnswerScore
+    print "Total Questions:", getTotalQuestions(posts)
+    print "Total Answers:", getTotalAnswers(posts)
+    print "Average Question Score:", getAverageQuestionScore(posts)
+    print "Average Answer Score:", getAverageAnswerScore(posts)
     print "Number Zero-Score Answers:", numZeroScoreAnswers

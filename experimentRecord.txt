@@ -1,0 +1,37 @@
+------------------------------------------------------------------
+10/24/2015 - Simplest unigram features on naive bayes
+
+Input: Apple forum posts
+Pre-processing: 
+- Strip all HTML
+- Strip all punctuation (except apostrophes)
+- All lower case
+- Porter stemming
+Feature extraction:
+- Unigram counts
+Labels: 3 classes
+- score <= 0, 
+- 0 < score <= mean + stdev
+- mean + stdev < score
+Learning model: Multinomial naive bayes
+Training set performance: Accuracy 65.6% with 0.1% standard deviation
+Test set performance: Accuracy 55.6% with 0.5% standard deviation
+
+------------------------------------------------------------------
+10/24/2015 - Simplest unigram features on SVM
+
+Input: Apple forum posts
+Pre-processing: 
+- Strip all HTML
+- Strip all punctuation (except apostrophes)
+- All lower case
+- Porter stemming
+Feature extraction:
+- Unigram counts
+Labels: 3 classes
+- score <= 0, 
+- 0 < score <= mean + stdev
+- mean + stdev < score
+Learning model: Multinomial naive bayes
+Training set performance: PENDING
+Test set performance: PENDING

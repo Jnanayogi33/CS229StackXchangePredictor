@@ -1,23 +1,39 @@
 from collections import Counter
+from sklearn.feature_extraction import DictVectorizer
+import postParseUtils as PU
+from random import shuffle
+import numpy as np
 
-def tokenCountByPost(posts):
+def tokenCountByAnswer(posts):
     counts = []
     for i in range(len(posts)):
+        if posts[i]['PostTypeId'] == PU.QUESTION: continue
         curr = Counter()
         for word in posts[i]['Title']: curr[word] += 1
         for word in posts[i]['Body']: curr[word] += 1
         counts += [curr]
     return counts
 
-def tokensPerPost(posts):
-    counts = []
-    for i in range(len(posts)): counts += [len(posts[i]['Title']) + len(posts[i]['Body'])]
-    return counts
+def vectorizeCounts(counts):
+    v = DictVectorizer(sparse=True)
+    X = v.fit_transform(counts)
+    return X
 
-def totalPerToken(posts):
-    counts = Counter()
+def rightPlaceInList(candidate, list):
+    for i in range(len(list)):
+        if candidate <= list[i]: return i
+    return len(list)
+
+def labelAnswerByScoreSplits(posts, splits):
+    Y = []
     for i in range(len(posts)):
-        for word in posts[i]['Title']: counts[word] += 1
-        for word in posts[i]['Body']: counts[word] += 1
-    return counts
+        if posts[i]['PostTypeId'] == PU.QUESTION: continue
+        Y += [rightPlaceInList(posts[i]['Score'], splits)]
+    return Y
 
+def jointShuffle(X, Y):
+    index = range(len(Y))
+    shuffle(index)
+    X = X[index]
+    Y = np.array(Y)[index].tolist()
+    return X, Y

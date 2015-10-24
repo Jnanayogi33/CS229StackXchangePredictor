@@ -28,7 +28,14 @@ def tokenize(posts):
 
 def stemTokens(posts):
     stemmer = nltk.stem.PorterStemmer()
+
+    total = len(posts)
+    checkpoint = total/10
+    checkcount = 0
     for i in range(len(posts)):
+        if i % checkpoint == 0:
+            print "Porter stemming progress:", float(checkcount/10.0)*100, "%"
+            checkcount += 1
         posts[i]['Body'] = [stemmer.stem(word) for word in posts[i]['Body']]
         posts[i]['Title'] = [stemmer.stem(word) for word in posts[i]['Title']]
     return posts
