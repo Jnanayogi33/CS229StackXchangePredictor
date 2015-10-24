@@ -33,5 +33,5 @@ Labels: 3 classes
 - 0 < score <= mean + stdev
 - mean + stdev < score
 Learning model: Multinomial naive bayes
-Training set performance: PENDING
-Test set performance: PENDING
+Training set performance: Accuracy 81.9% with 0.2% standard deviation
+Test set performance: Accuracy 54.7% with 0.8% standard deviation
