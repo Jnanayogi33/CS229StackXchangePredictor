@@ -37,10 +37,10 @@ file = './stackExchangeData/Apple/Posts.xml'
 # PU.savePosts(X, 'currentXvector')
 #
 #
-print "Create adjusted data labels (Y)"
+# print "Create adjusted data labels (Y)"
 adjustedScores = TC.getAdjustedScores(file)
 stdev = np.std(adjustedScores)
-scoreSplits = [0, stdev]
+scoreSplits = [-stdev, stdev]
 Y = [FE.rightPlaceInList(score, scoreSplits) for score in adjustedScores]
 PU.savePosts(Y,'currentYvector')
 
@@ -52,6 +52,6 @@ print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=1.0))
 print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=2.0))
 print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=5.0))
 print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=10.0))
-# print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=1.0))
-# print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.01))
-# print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.0001))
+print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=1.0))
+print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.01))
+print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.0001))

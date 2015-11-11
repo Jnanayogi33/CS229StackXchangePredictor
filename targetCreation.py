@@ -206,4 +206,7 @@ def getAdjustedScores(file):
     model = sklearn.linear_model.LinearRegression()
     model = model.fit(X,Y)
     Y_hat = model.predict(X)
+    # np.savetxt('Xtemp', X)
+    # np.savetxt('Ytemp', Y)
+    # np.savetxt('Yhattemp', Y_hat)
     return Y - Y_hat

@@ -21,7 +21,7 @@ def vectorizeCounts(counts):
 
 def rightPlaceInList(candidate, list):
     for i in range(len(list)):
-        if candidate <= list[i]: return i
+        if candidate < list[i]: return i
     return len(list)
 
 def addToListofDicts(listofdicts, list, label):
