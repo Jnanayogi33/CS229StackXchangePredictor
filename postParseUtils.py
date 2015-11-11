@@ -5,6 +5,10 @@ import numpy as np
 QUESTION = "1"
 ANSWER = "2"
 
+def getXMLRoot(inputSource):
+    tree = ET.parse(inputSource)
+    return tree.getroot()
+
 def extractPosts(inputSource):
     print "1. Creating parse tree"
     tree = ET.parse(inputSource)
@@ -16,7 +20,7 @@ def extractPosts(inputSource):
         currEntry = {}
         currEntry['Id'] = post.get('Id')
         currEntry['PostTypeId'] = post.get('PostTypeId')
-        currEntry['ParentID'] = post.get('ParentID')
+        currEntry['ParentId'] = post.get('ParentId')
         currEntry['AcceptedAnswerId'] = post.get('AcceptedAnswerId')
         currEntry['CreationDate'] = post.get('CreationDate')
         currEntry['Score'] = post.get('Score')
