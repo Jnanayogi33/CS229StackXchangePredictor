@@ -37,12 +37,12 @@ file = './stackExchangeData/Apple/Posts.xml'
 # PU.savePosts(X, 'currentXvector')
 #
 #
-# print "Create adjusted data labels (Y)"
-# adjustedScores = TC.getAdjustedScores(file)
-# stdev = np.std(adjustedScores)
-# scoreSplits = [0, stdev]
-# Y = [FE.rightPlaceInList(score, scoreSplits) for score in adjustedScores]
-# PU.savePosts(Y,'currentYvector')
+print "Create adjusted data labels (Y)"
+adjustedScores = TC.getAdjustedScores(file)
+stdev = np.std(adjustedScores)
+scoreSplits = [0, stdev]
+Y = [FE.rightPlaceInList(score, scoreSplits) for score in adjustedScores]
+PU.savePosts(Y,'currentYvector')
 
 X = PU.loadPosts('currentXvector')
 Y = PU.loadPosts('currentYvector')

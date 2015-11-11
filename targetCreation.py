@@ -121,7 +121,7 @@ def getAnswerXY(root, timeNow):
 
             Score = float(post.get('Score'))
             if Score >= 0: Score = math.log(Score + 1.0)
-            else: Score = math.log(math.exp(-Score/2.0))
+            else: Score = math.log(math.exp(Score/2.0))
             creationDate_str = post.get('CreationDate')
             creationDate = datetime.datetime.strptime(creationDate_str, "%Y-%m-%dT%H:%M:%S.%f")
             postAge = float((timeNow - creationDate).days)
