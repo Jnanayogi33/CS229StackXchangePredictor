@@ -18,8 +18,8 @@ def accuracy(matrix):
 
 def precision(matrix):
     precVals = []
-    numCategories = max(x[0] for x in matrix.keys())
-    for i in range(numCategories + 1):
+    numCategories = max(x[0] for x in matrix.keys())+1
+    for i in range(numCategories):
         numerator = float(matrix[(i,i)])
         denominator = float(sum(matrix[(j,i)] for j in range(numCategories)))
         precVals += [numerator/denominator]
@@ -27,17 +27,26 @@ def precision(matrix):
 
 def recall(matrix):
     recallVals = []
-    numCategories = max(x[0] for x in matrix.keys())
-    for i in range(numCategories + 1):
+    numCategories = max(x[0] for x in matrix.keys())+1
+    for i in range(numCategories):
         numerator = float(matrix[(i,i)])
         denominator = float(sum(matrix[(i,j)] for j in range(numCategories)))
         recallVals += [numerator/denominator]
     return recallVals
 
+def listAverage(list):
+    return [sum([x[i] for x in list])/len(list) for i in range(len(list[0]))]
+
 def nFoldValidation(X,Y,folds,model):
     X, Y = FE.jointShuffle(X, Y)
-    trainScores = collections.Counter()
-    testScores = collections.Counter()
+
+    trainAccuracies = []
+    testAccuracies = []
+    trainPrecision = []
+    testPrecision = []
+    trainRecall = []
+    testRecall = []
+
     for i in range(folds):
 
         lowSplit = i*len(Y)/folds
@@ -56,7 +65,19 @@ def nFoldValidation(X,Y,folds,model):
         trainConfusion = createConfusionMatrix(trainY, trainY_hat)
         testConfusion = createConfusionMatrix(testY, testY_hat)
 
-        for key in trainConfusion.keys(): trainScores[key] += trainConfusion[key]
-        for key in testConfusion.keys(): testScores[key] += testConfusion[key]
+        trainAccuracies += [accuracy(trainConfusion)]
+        testAccuracies += [accuracy(testConfusion)]
+        trainPrecision += [precision(trainConfusion)]
+        testPrecision += [precision(testConfusion)]
+        trainRecall += [recall(trainConfusion)]
+        testRecall += [recall(testConfusion)]
 
-    return accuracy(testScores), precision(testScores), recall(testScores)
+    trainAccuracies = sum(trainAccuracies)/folds
+    testAccuracies = sum(testAccuracies)/folds
+    trainPrecision = listAverage(trainPrecision)
+    testPrecision = listAverage(testPrecision)
+    trainRecall = listAverage(trainRecall)
+    testRecall = listAverage(testRecall)
+
+    return trainAccuracies, testAccuracies, trainPrecision, testPrecision, trainRecall, testRecall
+

@@ -32,17 +32,17 @@ file = './stackExchangeData/Apple/Posts.xml'
 # print "Generate features (X): unigram counts, image existence dummy variable, Q&A pair cosine similarity"
 # X = FE.tokenCountByAnswer(posts)
 # X = FE.addToListofDicts(X, FE.includeImage(posts), "##IMAGE##")
-# # X = FE.addToListofDicts(X, FE.cosScore(posts), "##COSINESIM##")
+# X = FE.addToListofDicts(X, FE.cosScore(posts), "##COSINESIM##")
 # X = FE.vectorizeCounts(X)
 # PU.savePosts(X, 'currentXvector')
-#
-#
+
+
 # print "Create adjusted data labels (Y)"
-adjustedScores = TC.getAdjustedScores(file)
-stdev = np.std(adjustedScores)
-scoreSplits = [-stdev, stdev]
-Y = [FE.rightPlaceInList(score, scoreSplits) for score in adjustedScores]
-PU.savePosts(Y,'currentYvector')
+# adjustedScores = TC.getAdjustedScores(file)
+# stdev = np.std(adjustedScores)
+# scoreSplits = [-stdev, stdev]
+# Y = [FE.rightPlaceInList(score, scoreSplits) for score in adjustedScores]
+# PU.savePosts(Y,'currentYvector')
 
 X = PU.loadPosts('currentXvector')
 Y = PU.loadPosts('currentYvector')

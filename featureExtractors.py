@@ -3,6 +3,7 @@ from sklearn.feature_extraction import DictVectorizer
 import postParseUtils as PU
 from random import shuffle
 import numpy as np
+import math
 
 def tokenCountByAnswer(posts):
     counts = []
@@ -106,6 +107,7 @@ def cosScore(posts):
 			norm_Q = np.sqrt(np.sum([i_q**2 for i_q in vector_Q.values()]))
 			norm_A = np.sqrt(np.sum([i_a**2 for i_a in vector_A.values()]))
 			cos = float(t1)/(norm_Q * norm_A)
+			if math.isnan(cos): cos = 0.0
 			cos_list += [cos]
 	return cos_list
 
