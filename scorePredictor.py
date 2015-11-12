@@ -47,11 +47,13 @@ file = './stackExchangeData/Apple/Posts.xml'
 X = PU.loadPosts('currentXvector')
 Y = PU.loadPosts('currentYvector')
 
+print X.shape
+
 print "Run n-folds validation and output resulting scores"
-print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=1.0))
-print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=2.0))
-print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=5.0))
-print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=10.0))
-print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=1.0))
-print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.01))
+# print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=1.0))
+# print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=2.0))
+# print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=5.0))
+# print LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=10.0))
+# print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=1.0))
+# print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.01))
 print LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.0001))

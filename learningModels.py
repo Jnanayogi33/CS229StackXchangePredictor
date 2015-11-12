@@ -22,7 +22,8 @@ def precision(matrix):
     for i in range(numCategories):
         numerator = float(matrix[(i,i)])
         denominator = float(sum(matrix[(j,i)] for j in range(numCategories)))
-        precVals += [numerator/denominator]
+        if numerator == 0.0: precVals += [0.0]
+        else: precVals += [numerator/denominator]
     return precVals
 
 def recall(matrix):
@@ -31,7 +32,8 @@ def recall(matrix):
     for i in range(numCategories):
         numerator = float(matrix[(i,i)])
         denominator = float(sum(matrix[(i,j)] for j in range(numCategories)))
-        recallVals += [numerator/denominator]
+        if numerator == 0.0: recallVals += [0.0]
+        else: recallVals += [numerator/denominator]
     return recallVals
 
 def listAverage(list):
