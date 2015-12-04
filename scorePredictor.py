@@ -13,14 +13,14 @@ nfolds = 5
 cache = './stackExchangeData/'
 file = './stackExchangeData/Apple/Posts.xml'
 posts = PU.extractPosts(file)
-# questionPosts = [post for post in posts if post['PostTypeId'] == '1']
-# answerPosts = [post for post in posts if post['PostTypeId'] == '2']
+questionPosts = [post for post in posts if post['PostTypeId'] == '1']
+answerPosts = [post for post in posts if post['PostTypeId'] == '2']
 
 
 ### For testing only! ###
-questionPosts = [post for post in posts if post['PostTypeId'] == '1' and int(post['Id']) < 50]
-parentIDs = [post['Id'] for post in questionPosts]
-answerPosts = [post for post in posts if post['PostTypeId'] == '2' and post['ParentId'] in parentIDs]
+# questionPosts = [post for post in posts if post['PostTypeId'] == '1' and int(post['Id']) < 5]
+# parentIDs = [post['Id'] for post in questionPosts]
+# answerPosts = [post for post in posts if post['PostTypeId'] == '2' and post['ParentId'] in parentIDs]
 
 
 ###################################################################################################
