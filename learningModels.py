@@ -2,6 +2,8 @@ import numpy as np
 import featureExtractors as FE
 from sklearn.naive_bayes import MultinomialNB
 import collections
+from random import shuffle
+from scipy import sparse
 
 def createConfusionMatrix(Y, Y_hat):
     matrix = collections.Counter()
@@ -39,8 +41,15 @@ def recall(matrix):
 def listAverage(list):
     return [sum([x[i] for x in list])/len(list) for i in range(len(list[0]))]
 
+def jointShuffle(X, Y):
+    index = range(len(Y))
+    shuffle(index)
+    X = sparse.csr_matrix(X.toarray()[index])
+    Y = np.array(Y)[index].tolist()
+    return X, Y
+
 def nFoldValidation(X,Y,folds,model):
-    X, Y = FE.jointShuffle(X, Y)
+    X, Y = jointShuffle(X, Y)
 
     trainAccuracies = []
     testAccuracies = []

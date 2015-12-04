@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import pickle
 import numpy as np
+from scipy.sparse import csr_matrix
 
 QUESTION = "1"
 ANSWER = "2"
@@ -77,6 +78,19 @@ def getAllAnswerScores(posts):
     for post in posts:
         if post['PostTypeId']==ANSWER: answerScores += [post['Score']]
     return answerScores
+
+# Save function for sparse matrices
+def saveSparseCSR(array, filename):
+    np.savez(filename,data = array.data ,indices=array.indices,
+             indptr =array.indptr, shape=array.shape )
+
+# Load function for sparse matrices
+def loadSparseCSR(filename):
+    if filename[-4:] != '.npz':
+        filename = filename + '.npz'
+    loader = np.load(filename)
+    return csr_matrix((  loader['data'], loader['indices'], loader['indptr']),
+                         shape = loader['shape'])
 
 def getTotalQuestions(posts):
     return sum(1 for post in posts if post['PostTypeId'] == QUESTION)

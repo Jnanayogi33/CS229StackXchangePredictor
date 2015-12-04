@@ -108,16 +108,17 @@ def answerScorePerViews(root, timeNow):
 
     return scorePerViews
 
-def getAnswerXY(root, timeNow):
+def getAnswerXY(root, timeNow, answerPosts):
 
     X = np.array([[0,0,0,0,0,0,0,0]])
     Y = np.array([[0]])
     qCreateDates = questionCreationDate(root)
     qViewCounts = questionViewCount(root)
     aExistingCounts = existingAnswersAtTimeOfPost(root)
+    answerPostIds = [aPost['Id'] for aPost in answerPosts]
 
     for post in root:
-        if post.get('PostTypeId') == '2':
+        if post.get('PostTypeId') == '2' and post.get('Id') in answerPostIds:
 
             Score = float(post.get('Score'))
             if Score >= 0: Score = math.log(Score + 1.0)
@@ -197,12 +198,12 @@ def getAverageScorePerParentViews(root):
     return averageScores
 
 # Return scores with factors associated with
-def getAdjustedScores(file):
+def getAdjustedScores(file, answerPosts):
 
     root = ET.parse(file).getroot()
     timeNow = datetime.datetime.fromtimestamp(os.path.getctime(file))
 
-    X, Y = getAnswerXY(root, timeNow)
+    X, Y = getAnswerXY(root, timeNow, answerPosts)
     model = sklearn.linear_model.LinearRegression()
     model = model.fit(X,Y)
     Y_hat = model.predict(X)
