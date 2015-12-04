@@ -18,10 +18,9 @@ posts = PU.extractPosts(file)
 
 
 ### For testing only! ###
-questionPosts = [posts[0], posts[2]]
-answers1 = [post for post in posts if post['PostTypeId'] == '2' and post['ParentId'] == '1']
-answers2 = [post for post in posts if post['PostTypeId'] == '2' and post['ParentId'] == '3']
-answerPosts = answers1 + answers2
+questionPosts = [post for post in posts if post['PostTypeId'] == '1' and int(post['Id']) < 50]
+parentIDs = [post['Id'] for post in questionPosts]
+answerPosts = [post for post in posts if post['PostTypeId'] == '2' and post['ParentId'] in parentIDs]
 
 
 ###################################################################################################
