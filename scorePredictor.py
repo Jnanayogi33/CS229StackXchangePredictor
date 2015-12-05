@@ -108,10 +108,7 @@ X_qTypeSVD5 = FE.reduceDimensions(sparse.hstack([X_topicBinary, X_qVect, X_qMeta
 #  - returns X features with only first order interaction terms of the form x*y where x comes from matrix X and y comes from different matrix Y
 #  - WARNING: takes too long whenever try to create interaction terms for bigger sparse vectors like X_wordCounts (and takes too much memory)
 #  - Currently addressing by only creating interaction terms for dimension-reduced matrices
-if os.path.isfile(cache + 'X_interactionQtypeWordTfidf.npz'): X_interactionQtypeWordTfidf = PU.loadSparseCSR(cache + 'X_interactionQtypeWordTfidf.npz')
-else: 
-	X_interactionQtypeWordTfidf = FE.getInteractionMatrix([X_qTypeSVD5, X_wordTfidfSVD300])
-	PU.saveSparseCSR(X_interactionQtypeWordTfidf, cache + 'X_interactionQtypeWordTfidf.npz')
+X_interactionQtypeWordTfidf = FE.getInteractionMatrix([X_qTypeSVD5, X_wordTfidfSVD300])
 
 
 ###################################################################################################
@@ -158,7 +155,7 @@ LM.nFoldValidation(X,Y,nfolds,MultinomialNB(alpha=10.0), "Multinomial NB, alpha 
 #  - Advantage because does not make assumptions on feature distribution, so provide more diverse, nonlinear features
 #  - Balance classes evenly so voter won't always vote for most common class
 from sklearn.linear_model import LogisticRegression
-X = sparse.hstack([X_interactionQtypeWordTfidf, X_qaWord2VecSim, X_qaTfidfSim, X_aMeta, X_qMeta])
+X = sparse.hstack([X_interactionQtypeWordTfidf, X_wordTfidf, X_aVect, X_qaWord2VecSim, X_qaTfidfSim, X_aMeta, X_qMeta])
 LM.nFoldValidation(X,Y,nfolds,LogisticRegression(C=1.0, class_weight='balanced'), "LogReg, C = 1.0, mix of mostly nonlinear features")
 LM.nFoldValidation(X,Y,nfolds,LogisticRegression(C=0.1, class_weight='balanced'), "LogReg, C = 0.1, mix of mostly nonlinear features")
 LM.nFoldValidation(X,Y,nfolds,LogisticRegression(C=0.01, class_weight='balanced'), "LogReg, C = 0.01, mix of mostly nonlinear features")
@@ -169,7 +166,7 @@ LM.nFoldValidation(X,Y,nfolds,LogisticRegression(C=0.001, class_weight='balanced
 #  - Typically requires features that vary within the same range (not linear invariant)
 #  - Balance classes evenly so voter won't always vote for most common class
 from sklearn import svm
-X = sparse.hstack([X_wordTfidf, X_aVect, X_qaWord2VecSim, X_qaTfidfSim])
+X = sparse.hstack([X_interactionQtypeWordTfidf, X_wordTfidf, X_aVect, X_qaWord2VecSim, X_qaTfidfSim, X_aMeta, X_qMeta])
 LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=1.0, class_weight='balanced'), "Linear SVM classifier, C = 1.0, mix of mostly nonlinear features < 1.0")
 LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.1, class_weight='balanced'), "Linear SVM classifier, C = 0.1, mix of mostly nonlinear features < 1.0")
 LM.nFoldValidation(X,Y,nfolds,svm.LinearSVC(C=0.01, class_weight='balanced'), "Linear SVM classifier, C = 0.01, mix of mostly nonlinear features < 1.0")
