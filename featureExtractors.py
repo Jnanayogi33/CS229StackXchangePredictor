@@ -8,6 +8,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.decomposition import TruncatedSVD
 from scipy import sparse
 from spacy.en import English, LOCAL_DATA_DIR
 
@@ -30,9 +31,13 @@ def getTags(soup):
 
 # helper takes matrix (sparse or non-sparse) and returns log in sparse form. 
 #  - Add 1 to smooth out zeroes. Assume no negative inputs
+#  - If receive sparse matrix assume super large so switch to COO matrix constructor
 def sparseLog(matrix):
 	if type(matrix) == scipy.sparse.csr.csr_matrix:
-		return sparse.csr_matrix(np.log(matrix.toarray() + 1.0))
+		coo = sparse.coo_matrix(matrix)
+		newData = np.log(coo.data + 1.0)
+		coo = sparse.coo_matrix((newData, (coo.row, coo.col)), shape=coo.shape)
+		return sparse.csr_matrix(coo)
 	elif type(matrix) == np.ndarray or type(matrix) == np.matrixlib.defmatrix.matrix:
 		return sparse.csr_matrix(np.log(matrix + 1.0))
 	elif type(matrix) == list:
@@ -120,12 +125,42 @@ def getWordFeatures(questionPosts, answerPosts):
 	return aBinary, aCounts, aTfidf, sparse.csr_matrix(qaSim)
 
 
-# Create and return first degree interaction terms ONLY
+# Reduce dimension of matrix using PCA:
+#  - assume given sparse matrix and will return sparse matrix
+def reduceDimensions(matrix, dim=100):
+	svd=TruncatedSVD(n_components=dim)
+	result = sparse.csr_matrix(svd.fit_transform(matrix))
+	print 'variance explained:', np.sum(svd.explained_variance_ratio_)
+	return result
+
+
+# Helper: get first order interaction terms between two sparse matrices only, but they must be small!
+def getInteractions2Matrices(matA, matB):
+	matCombined = []
+	matA = matA.toarray()
+	matB = matB.toarray()
+	for i in range(matA.shape[1]):
+		print 'Interaction matrix progress:', i, '/', matA.shape[1]
+		for j in range(matB.shape[1]):
+			curr = np.prod((matA[:,i], matB[:,j]), axis=0)
+			curr = sparse.csr_matrix(curr)
+			if j == 0: combined = curr
+			else: combined = sparse.vstack([combined, curr])
+		matCombined += [combined]
+	matCombined = sparse.vstack(matCombined)
+	return matCombined.transpose()
+
+
+# Get first degree interaction terms between matrices in a list of matrices
+#  - Each term is of the form x_1 * x_2 where x_1 is from one matrix, x_2 is from a different one
+#  - Assume incoming matrices sparse, outgoing ones also sparse (csr), or else would break!
 def getInteractionMatrix(xList):
-	X_combined = sparse.hstack(xList)
-	X_plusInteractions = PolynomialFeatures(interaction_only=True, include_bias=False).fit_transform(X_combined.toarray())
-	X_interactionOnly = X_plusInteractions[:,X_combined.shape[1]:]
-	return X_interactionOnly
+	matCombined = None
+	for i in range(len(xList)):
+		for j in range(i+1,len(xList)):
+			if matCombined == None: matCombined = getInteractions2Matrices(xList[i], xList[j])
+			else: matCombined = sparse.hstack([matCombined, getInteractions2Matrices(xList[i], xList[j])]) 
+	return matCombined
 
 
 # Helper function places candidate in right part of list based on given threshold values
