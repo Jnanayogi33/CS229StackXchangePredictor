@@ -90,6 +90,22 @@ else:
 	PU.saveSparseCSR(X_qaTfidfSim, cache + 'X_qaTfidfSim.npz')
 
 
+# Get a simplified set of word features just for answer vectors
+#  - Only include unigrams, bigrams that appear in at least 100 posts out of 90,000 (--> 100x smaller feature vectors)
+#  - Lemmatize text before processing it (at risk of changing original meaning, but also shrinking feature vector)
+#  - Use in case the larger word feature vectors lead to too much overfitting
+if os.path.isfile(cache + 'X_wordBinarySmall.npz') and os.path.isfile(cache + 'X_wordCountsSmall.npz') and \
+	os.path.isfile(cache + 'X_wordTfidfSmall.npz'):
+	X_wordBinarySmall = PU.loadSparseCSR(cache + 'X_wordBinarySmall.npz')
+	X_wordCountsSmall = PU.loadSparseCSR(cache + 'X_wordCountsSmall.npz')
+	X_wordTfidfSmall = PU.loadSparseCSR(cache + 'X_wordTfidfSmall.npz')
+else:
+	X_wordBinarySmall, X_wordCountsSmall, X_wordTfidfSmall = FE.getShrunkenWordFeatures(answerPosts)
+	PU.saveSparseCSR(X_wordBinarySmall, cache + 'X_wordBinarySmall.npz')
+	PU.saveSparseCSR(X_wordCountsSmall, cache + 'X_wordCountsSmall.npz')
+	PU.saveSparseCSR(X_wordTfidfSmall, cache + 'X_wordTfidfSmall.npz')
+
+
 # Certain features are in raw count form. Here we create their logged versions where useful
 X_xmlCountsLog = FE.sparseLog(X_xmlCounts)
 X_wordCountsLog = FE.sparseLog(X_wordCounts)

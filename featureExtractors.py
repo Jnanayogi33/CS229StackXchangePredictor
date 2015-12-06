@@ -125,6 +125,21 @@ def getWordFeatures(questionPosts, answerPosts):
 	return aBinary, aCounts, aTfidf, sparse.csr_matrix(qaSim)
 
 
+# Get a simplified set of word features just for answer vectors
+#  - Only include unigrams, bigrams that appear in at least 100 posts out of 90,000 (--> 100x smaller feature vectors)
+#  - Lemmatize text before processing it (at risk of changing original meaning)
+def getShrunkenWordFeatures(answerPosts):
+	answerLemmas = []
+	for aPost in answerPosts:
+		curr = FE.nlp(FE.BeautifulSoup(aPost['Body']).get_text())
+		answerLemmas += [" ".join([tok.lemma_ for tok in curr]).replace(u'\n',u'')]
+	minRatio = 100.0/len(answerLemmas)
+	aTfidf = TfidfVectorizer(ngram_range=(1,2), min_df=minRatio).fit_transform(answerLemmas)
+	aBinary = CountVectorizer(binary=True, ngram_range=(1,2), min_df=minRatio).fit_transform(answerLemmas)
+	aCounts = CountVectorizer(ngram_range=(1,2), min_df=minRatio).fit_transform(answerLemmas)
+	return aBinary, aCounts, aTfidf
+
+
 # Reduce dimension of matrix using PCA:
 #  - assume given sparse matrix and will return sparse matrix
 def reduceDimensions(matrix, dim=100):
